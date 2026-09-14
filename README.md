@@ -12,5 +12,3 @@ GitHub Pages deployment steps:
 8. Wait for GitHub Pages to provide a public HTTPS URL similar to `https://USERNAME.github.io/resale-command-center-privacy/`.
 9. Open the URL and verify the privacy policy loads.
 10. Paste that HTTPS URL into the eBay Developer Portal Privacy Policy URL field.
-
-Before publishing, replace `[CONTACT EMAIL TO BE ADDED]` in `index.html`.
