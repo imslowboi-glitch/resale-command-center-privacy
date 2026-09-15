@@ -111,9 +111,24 @@
         var code = params.get('code');
         var state = params.get('state') || '';
         var expiresIn = params.get('expires_in') || '';
+        var legacyToken = params.has('ebaytkn') || params.has('tknexp') || params.has('username');
         var status = document.getElementById('status');
         var openApp = document.getElementById('open-app');
         var copyButton = document.getElementById('copy-callback');
+
+        copyButton.addEventListener('click', function () {
+          navigator.clipboard.writeText(window.location.href).then(function () {
+            copyButton.textContent = 'Copied';
+          }, function () {
+            copyButton.textContent = 'Copy failed';
+          });
+        });
+
+        if (legacyToken) {
+          status.textContent = 'Legacy eBay authorization parameters were received instead of an OAuth authorization code. Return to Resale Command Center and retry the OAuth connection.';
+          openApp.hidden = true;
+          return;
+        }
 
         if (!code) {
           status.textContent = 'No eBay authorization code was found in this callback.';
@@ -130,14 +145,6 @@
         window.setTimeout(function () {
           window.location.href = target.toString();
         }, 250);
-
-        copyButton.addEventListener('click', function () {
-          navigator.clipboard.writeText(window.location.href).then(function () {
-            copyButton.textContent = 'Copied';
-          }, function () {
-            copyButton.textContent = 'Copy failed';
-          });
-        });
       })();
     </script>
   </body>
