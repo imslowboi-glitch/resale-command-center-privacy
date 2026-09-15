@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>eBay Authorization Approved - Resale Command Center</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0d1117;
+        --panel: #141a22;
+        --text: #eef4fb;
+        --muted: #9eacbb;
+        --accent: #25c2a0;
+        --border: #2a3442;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.6;
+      }
+
+      main {
+        width: min(620px, 100%);
+        padding: 28px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--panel);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(1.8rem, 7vw, 3rem);
+        line-height: 1.08;
+      }
+
+      p {
+        margin: 0 0 14px;
+        color: var(--muted);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      a,
+      button {
+        min-height: 42px;
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text);
+        background: #19212c;
+        font: inherit;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      a.primary {
+        border-color: rgba(37, 194, 160, 0.65);
+        background: var(--accent);
+        color: #06120f;
+      }
+
+      small {
+        display: block;
+        margin-top: 18px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>eBay authorization approved.</h1>
+      <p id="status">Attempting to return to Resale Command Center...</p>
+      <p>
+        If Windows asks for permission to open Resale Command Center, approve it to finish connecting
+        your seller account.
+      </p>
+      <div class="actions">
+        <a class="primary" id="open-app" href="#">Open Resale Command Center</a>
+        <button id="copy-callback" type="button">Copy Full Callback URL</button>
+      </div>
+      <small>
+        If the app does not open automatically, copy the full callback URL and paste it into Resale
+        Command Center's Manual Authorization field. The authorization code is not displayed here.
+      </small>
+    </main>
+
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var code = params.get('code');
+        var state = params.get('state') || '';
+        var expiresIn = params.get('expires_in') || '';
+        var status = document.getElementById('status');
+        var openApp = document.getElementById('open-app');
+        var copyButton = document.getElementById('copy-callback');
+
+        if (!code) {
+          status.textContent = 'No eBay authorization code was found in this callback.';
+          openApp.hidden = true;
+          return;
+        }
+
+        var target = new URL('resale-command-center://ebay/oauth');
+        target.searchParams.set('code', code);
+        if (state) target.searchParams.set('state', state);
+        if (expiresIn) target.searchParams.set('expires_in', expiresIn);
+
+        openApp.href = target.toString();
+        window.setTimeout(function () {
+          window.location.href = target.toString();
+        }, 250);
+
+        copyButton.addEventListener('click', function () {
+          navigator.clipboard.writeText(window.location.href).then(function () {
+            copyButton.textContent = 'Copied';
+          }, function () {
+            copyButton.textContent = 'Copy failed';
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
